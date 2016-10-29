@@ -6,9 +6,9 @@ all:
 	ghdl --remove
 	rm -rf work *.o $(top)
 	mkdir work
-	ghdl -i --workdir=work *.vhd
-	ghdl -m --workdir=work $(top)
-	ghdl -r --workdir=work $(top) --stop-time=$(time)ns --vcd=$(top).vcd
+	ghdl -i --ieee=synopsys --workdir=work *.vhd
+	ghdl -m --ieee=synopsys --workdir=work $(top)
+	ghdl -r --ieee=synopsys --workdir=work $(top) --stop-time=$(time)ns --vcd=$(top).vcd
 	ghdl --clean
 	ghdl --remove
 	rm -rf work *.o $(top)
@@ -24,9 +24,9 @@ note:
 	ghdl --remove
 	rm -rf work *.o $(top)
 	mkdir work
-	ghdl -i --workdir=work *.vhd
-	ghdl -m --workdir=work $(top)
-	ghdl -r --workdir=work $(top) --assert-level=note --vcd=$(top).vcd
+	ghdl -i --ieee=synopsys --workdir=work *.vhd
+	ghdl -m --ieee=synopsys --workdir=work $(top)
+	ghdl -r --ieee=synopsys --workdir=work $(top) --assert-level=note --vcd=$(top).vcd
 	ghdl --clean
 	ghdl --remove
 	rm -rf work *.o $(top)
