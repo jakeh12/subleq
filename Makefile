@@ -1,5 +1,5 @@
-top ?= alu_32bit_tb
-time ?= 1000
+top ?= ram_tb
+time ?= 3000
 
 all:
 	ghdl --clean

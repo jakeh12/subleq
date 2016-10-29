@@ -1,7 +1,7 @@
 -------------------------------------------------------------------------------
--- Synchronous single-port ROM implementation.
+-- Synchronous single-port RAM implementation.
 --
--- (Synchronous -> FPGA SRAM target)
+-- Reads input address on rising edge, writes on falling edge.
 -- Synthesizable, with file initialization.
 --
 -- 2016/10/28 Jakub Hladik, Iowa State University
@@ -12,21 +12,23 @@ use ieee.numeric_std.all;
 use ieee.std_logic_textio.all;
 use std.textio.all;
 -------------------------------------------------------------------------------
-entity rom is
+entity ram is
   
   generic (
     n         : natural := 8;           -- width of word in bits
     l         : natural := 8;           -- width of address bus in bits
-    init_file : string  := "rom.mif");  -- memory intialization file
+    init_file : string  := "ram.mif");  -- memory intialization file
 
   port (
-    i_addr  : in  std_logic_vector (n-1 downto 0);  -- address input
+    i_addr  : in  std_logic_vector (n-1 downto 0);   -- address input
+    i_wdata : in  std_logic_vector (n-1 downto 0);   -- data input
+    i_wen   : in  std_logic;                         -- write enable
     o_rdata : out std_logic_vector (n-1 downto 0);  -- data output
-    i_clk   : in  std_logic);                       -- clock input
+    i_clk   : in std_logic);            -- clock input
 
-end entity rom;
+end entity ram;
 -------------------------------------------------------------------------------
-architecture behavioral of rom is
+architecture behavioral of ram is
 
   type mem_array is array ((2**l-1) downto 0) of std_logic_vector(n-1 downto 0);
 
@@ -51,21 +53,35 @@ architecture behavioral of rom is
     return result;
   end function;
 
-  signal rom_block : mem_array := mem_init_from_file(init_file);
+  signal ram_block : mem_array := mem_init_from_file(init_file);
   
 begin  -- architecture behavioral
 
------------------------------------------------------------------------------
--- output_data:
--- This process reads i_addr input on rising edge of the clock and outputs
--- the appropriate data on the o_rdata output.
------------------------------------------------------------------------------
-  output_data : process (i_clk, i_addr) is
+  -----------------------------------------------------------------------------
+  -- output_data:
+  -- This process reacts to changes in i_addr input and outputs the appropriate
+  -- data on the o_rdata output.
+  -----------------------------------------------------------------------------
+  output_rdata : process (i_clk, i_addr) is
   begin
     if rising_edge(i_clk) then
-      o_rdata <= rom_block(to_integer(unsigned(i_addr)));
+      o_rdata <= ram_block(to_integer(unsigned(i_addr)));
     end if;
   end process;
+
+  -----------------------------------------------------------------------------
+  -- write_data:
+  -- This process writes into RAM on falling edge of the clock if wen = '1'.
+  -----------------------------------------------------------------------------
+  write_data : process (i_clk, i_addr, i_wen) is
+  begin
+    if falling_edge(i_clk) then
+      if i_wen = '1' then
+        ram_block(to_integer(unsigned(i_addr))) <= i_wdata;
+      end if;
+    end if;
+  end process;
+  
 
 end architecture behavioral;
 -------------------------------------------------------------------------------
