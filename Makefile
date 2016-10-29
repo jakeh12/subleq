@@ -1,5 +1,5 @@
 top ?= ram_tb
-time ?= 3000
+time ?= 200
 
 all:
 	ghdl --clean

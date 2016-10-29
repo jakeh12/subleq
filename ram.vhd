@@ -1,7 +1,7 @@
 -------------------------------------------------------------------------------
 -- Synchronous single-port RAM implementation.
 --
--- Reads input address on rising edge, writes on falling edge.
+-- Reads input address on rising edge, writes on rising edge.
 -- Synthesizable, with file initialization.
 --
 -- 2016/10/28 Jakub Hladik, Iowa State University
@@ -62,20 +62,20 @@ begin  -- architecture behavioral
   -- This process reacts to changes in i_addr input and outputs the appropriate
   -- data on the o_rdata output.
   -----------------------------------------------------------------------------
-  output_rdata : process (i_clk, i_addr) is
+  output_rdata : process (i_addr) is --  output_rdata : process (i_clk, i_addr) is
   begin
-    if rising_edge(i_clk) then
+    --if rising_edge(i_clk) then
       o_rdata <= ram_block(to_integer(unsigned(i_addr)));
-    end if;
+    --end if;
   end process;
 
   -----------------------------------------------------------------------------
   -- write_data:
-  -- This process writes into RAM on falling edge of the clock if wen = '1'.
+  -- This process writes into RAM on rising edge of the clock if wen = '1'.
   -----------------------------------------------------------------------------
   write_data : process (i_clk, i_addr, i_wen) is
   begin
-    if falling_edge(i_clk) then
+    if rising_edge(i_clk) then
       if i_wen = '1' then
         ram_block(to_integer(unsigned(i_addr))) <= i_wdata;
       end if;

@@ -24,7 +24,7 @@ end entity reg;
 -------------------------------------------------------------------------------
 architecture behavioral of reg is
 
-  signal s_data : std_logic_vector(n-1 downto 0);
+  signal s_data : std_logic_vector(n-1 downto 0);-- := (others => '0');
   
 begin  -- architecture behavioral
 

@@ -61,6 +61,15 @@ begin  -- architecture behavioral
     s_wen <= '0';
     wait for 40 ns;
     s_inc <= '0';
+    s_rst <= '1';
+    wait for 50 ns;
+    s_rst <= '0';
+    s_inc <= '1';
+    s_wen <= '1';
+    s_wdata <= X"AA";
+    wait for 10 ns;
+    s_inc <= '0';
+    s_wen <= '1';
     wait;
     
   end process;
